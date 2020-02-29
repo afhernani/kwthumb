@@ -1,0 +1,79 @@
+#:kivy 1.10.0
+
+<ThumbView>:
+    orientation:'vertical'
+    padding: '10dp', '10dp'
+    spacing: '10dp'
+    
+    BoxLayout:
+        orientation:'horizontal'
+        size_hint:(1,.10)
+
+        Label:
+            text: "Path:  "
+            size: self.texture_size
+            bold: True
+            color: [0, 0, 1, 1]
+            font_hinting: 'mono'
+            font_size: '20sp'
+            size_hint_x:None
+            # width:'30sp'
+            size_hint_y:None
+            height:'30sp'
+
+        TextInput:
+            id: idpath
+            text: 'f:\\tmp'
+            multiline: False
+            size_hint_y:  None
+            height: '30sp'
+            # size_hint_x:  None
+            # width: '500sp'
+
+        Button:
+            text: "Aplicar"
+            size_hint_x:  None
+            width: '100sp' 
+            size_hint_y:  None
+            height: '30sp'
+            pos_hint: {'x':0, 'right': 1}
+            on_release:
+                root.aplicar('a cada lado')
+
+    ScrollView:
+        BoxLayout:
+            id:box
+            orientation:'vertical'
+            size_hint_y:None
+            height:self.minimum_height
+            
+    Image:
+        id:imgview
+        anim_delay: .5
+        mipmap: True
+        allow_stretch: True
+        source:'kingy-anal.gif'
+
+<Thumb>:
+    size_hint_y:None
+    height:'130sp'
+    Image:
+        id:imgview
+        anim_delay: 1
+        mipmap: True
+        allow_stretch:True
+        size_hint_x:None
+        width:'200sp'
+    Mensaje:
+        id:label
+        font_size:'20sp'
+        text:'None'
+    Button:
+        id:boton
+        text:'A'
+        size_hint_x:None
+        width:60
+        on_release:
+            app.root.ids.imgview.source=root.ids.imgview.source
+            root.addate_image(root.ids.imgview.source)
+    
