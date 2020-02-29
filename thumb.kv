@@ -7,7 +7,8 @@
     
     BoxLayout:
         orientation:'horizontal'
-        size_hint:(1,.10)
+        size_hint:(1,None)
+        height: '38sp'
 
         Label:
             text: "Path:  "
@@ -40,26 +41,47 @@
             on_release:
                 root.aplicar('a cada lado')
 
-    ScrollView:
-        BoxLayout:
-            id:box
-            orientation:'vertical'
-            size_hint_y:None
-            height:self.minimum_height
+    BoxLayout:
+        anchor_x:'center'
+        anchor_y:'bottom'
+        size_hint:(1,.8)
+        ScrollView:
+            BoxLayout:
+                id:box
+                orientation:'vertical'
+                size_hint_y:None
+                height:self.minimum_height
+    BoxLayout:
+        size_hint:(1,.3)
+        # height:root.ids.imgview.height 
+        Image:
+            id:imgview
+            anim_delay: 1
+            mipmap: True
+            allow_stretch: True
             
-    Image:
-        id:imgview
-        anim_delay: .5
-        mipmap: True
-        allow_stretch: True
-        source:'kingy-anal.gif'
+
+    BoxLayout:
+        anchor_x:'center'
+        anchor_y:'bottom'
+        size_hint:1,.2
+        BoxLayout:
+            orientation:'vertical'
+            GeneralOptions:
+                id: _general_option
+                size_hint: 1, None
+                height:'48sp'
+            StatusBar:
+                id:_status_bar
+                size_hint:1, None
+                height:'30sp'
 
 <Thumb>:
     size_hint_y:None
     height:'130sp'
     ButtonThumb:
         id:imgview
-        anim_delay: 1
+        anim_delay: 1.5
         mipmap: True
         allow_stretch:True
         size_hint_x:None
@@ -71,5 +93,27 @@
         id:label
         font_size:'20sp'
         text:'None'
-        
+
+<GeneralOptions@BoxLayout>:
+    orientation:'horizontal'
+    padding:'2sp'
+    Button:
+        text:'Clear'
+    Button:
+        text:'Remove'
+    Button:
+        text:'Make'
+    Button:
+        text:'Open'
+    ToggleButton:
+        text:'Gestionar'
+
+<StatusBar@BoxLayout>:
+    orientation:'horizontal'
+    Label:
+        id: label_a
+        text: 'Total Thumbs: ?'
+    Label:
+        id: label_b
+        text: 'Kivy started'
     

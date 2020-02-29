@@ -78,7 +78,8 @@ class ThumbApp(App):
     def build(self):
         self.files=[]
         # files = ['bbt.gif', 'huge.gif', 'kingy-anal.gif', 'mellons.gif', 'mother.gif']
-        directorio = 'F:\\tmp\\VSDG_E'
+        # directorio = 'F:\\tmp\\VSDG_E'
+        directorio = 'F:\\tmp\\_Clasic_moom'
         # self.thumbview = ThumbView(files=files)
         self.thumbview = ThumbView()
         self.load_thread(directorio)
@@ -102,7 +103,8 @@ class ThumbApp(App):
                     self.files.append(fex)
                     # Clock.schedule_once(partial(self.update_box_imagen, str(fex)))
                     # self.box.ids.box.add_widget(Splitfloat(source=fex, anim_delay= 1))
-        threading.Thread(target=self.start_load_thread, args=(self.files,), daemon=True).start()
+        self.title += ' ' + str(len(self.files))
+        threading.Thread(target=self.start_load_thread, args=(self.files,), daemon=False).start()
         #print('files:', self.files,', len:', len(self.files))
 
     def start_load_thread(self, files=[]):
