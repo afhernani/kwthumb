@@ -15,11 +15,23 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.textinput import TextInput
 from kivy.uix.label import Label
 from kivy.metrics import sp
+from kivy.uix.image import Image
+from kivy.uix.behaviors import ButtonBehavior
 
+class ButtonThumb(ButtonBehavior, Image):
+    def __init__(self, **kwargs):
+        super(ButtonThumb, self).__init__(**kwargs)
+
+    def on_touch_down(self, touch):
+        if touch.is_double_tap:
+            print("Do thing A, but not B") 
+        else:
+            print("Do thing B")
+        return super().on_touch_down(touch)
 
 class Thumb(BoxLayout):
     def __init__(self, source, **kwargs):
-        super().__init__(**kwargs)
+        super(Thumb, self).__init__(**kwargs)
         # si existe el fichero lo adicionamos, si no, 
         # no lo adicionamos.
         if os.path.exists(source):

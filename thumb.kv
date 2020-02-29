@@ -57,23 +57,19 @@
 <Thumb>:
     size_hint_y:None
     height:'130sp'
-    Image:
+    ButtonThumb:
         id:imgview
         anim_delay: 1
         mipmap: True
         allow_stretch:True
         size_hint_x:None
         width:'200sp'
+        on_release:
+            app.root.ids.imgview.source=root.ids.imgview.source
+            root.addate_image(root.ids.imgview.source)
     Mensaje:
         id:label
         font_size:'20sp'
         text:'None'
-    Button:
-        id:boton
-        text:'A'
-        size_hint_x:None
-        width:60
-        on_release:
-            app.root.ids.imgview.source=root.ids.imgview.source
-            root.addate_image(root.ids.imgview.source)
+        
     
