@@ -17,6 +17,8 @@ from kivy.uix.label import Label
 from kivy.metrics import sp
 from kivy.uix.image import Image
 from kivy.uix.behaviors import ButtonBehavior
+from kivy.uix.settings import SettingsWithSidebar, ConfigParser
+from settingsjson import settings_json
 
 class ButtonThumb(ButtonBehavior, Image):
     def __init__(self, **kwargs):
@@ -76,15 +78,45 @@ class ThumbApp(App):
         self.root.stop.set()
 
     def build(self):
+        '''constructor de la aplicacion '''
+        self.settings_cls = SettingsWithSidebar
         self.files=[]
         # files = ['bbt.gif', 'huge.gif', 'kingy-anal.gif', 'mellons.gif', 'mother.gif']
+        ''' lee un registro configuración de la app '''
+        directorio  = self.config.get('example', 'pathexample')
         # directorio = 'F:\\tmp\\VSDG_E'
-        directorio = 'F:\\tmp\\_Clasic_moom'
+        # directorio = 'F:\\tmp\\_Clasic_moom'
         # self.thumbview = ThumbView(files=files)
         self.thumbview = ThumbView()
         self.load_thread(directorio)
         return self.thumbview
     
+    def build_config(self, config):
+        ''' establece configuracion por defecto de la app, si no existe el fichero
+        settings.ini, lo crea y adiciona los valores por defecto '''
+        config.setdefaults('example', {
+            'boolexample': True,
+            'numericexample': 10,
+            'optionsexample': 'option2',
+            'stringexample':'some_string',
+            'pathexample':'f:/tmp/VSDG_E'
+        })
+
+    def build_settings(self, settings):
+        ''' inserta al panel de configuración de kivy la configuracion de la aplicacion '''
+        settings.add_json_panel('Thumb', self.config, data=settings_json)
+
+    def on_config_change(self, config, section, 
+                         key, value):
+        ''' se ejecuta cuando cambia los valores del panel settings '''
+        print(config, section, key, value)
+
+    def change_value(self, section, key, value):
+        ''' establecemos un valor pathexample nuevo en la seccion example '''
+        # self.config.set('example','pathexample','f:/tmp/kvsettings')
+        self.config.set(section, key, value)
+        print('change_value: ', section, key, value)
+
     def load_thread(self, dirpath='.'):
         from functools import partial
         self.dirpathmovies = dirpath
