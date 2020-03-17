@@ -26,9 +26,11 @@ class ButtonThumb(ButtonBehavior, Image):
 
     def on_touch_down(self, touch):
         if touch.is_double_tap:
-            print("Do thing A, but not B") 
+            print("double_tap") 
+            return True
         else:
-            print("Do thing B")
+            print("single_tap")
+            # return True
         return super().on_touch_down(touch)
 
 class Thumb(BoxLayout):
