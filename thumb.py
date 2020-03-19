@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import os, sys
 import threading
+import errno
 import time
 import kivy
 kivy.require('1.10.0')
@@ -54,9 +55,10 @@ class ThumbView(BoxLayout):
         self.files=files
         for file in self.files:
             self.ids.box.add_widget(Thumb(source=file))
+        for key, value in kwargs.items():
+            if key=='source':
+                self.files.append(value)
 
-    def aplicar(self, *args):
-        print('aplicar:', args)
 
 class Mensaje(Label):
     def __init__(self, **kwargs):
@@ -85,12 +87,12 @@ class ThumbApp(App):
         self.files=[]
         # files = ['bbt.gif', 'huge.gif', 'kingy-anal.gif', 'mellons.gif', 'mother.gif']
         ''' lee un registro configuración de la app '''
-        directorio  = self.config.get('example', 'pathexample')
+        self.directorio  = self.config.get('example', 'pathexample')
         # directorio = 'F:\\tmp\\VSDG_E'
         # directorio = 'F:\\tmp\\_Clasic_moom'
         # self.thumbview = ThumbView(files=files)
         self.thumbview = ThumbView()
-        self.load_thread(directorio)
+        self.load_thread(self.directorio)
         return self.thumbview
     
     def build_config(self, config):
@@ -103,6 +105,7 @@ class ThumbApp(App):
             'stringexample':'some_string',
             'pathexample':'f:/tmp/VSDG_E'
         })
+        # self.config = config
 
     def build_settings(self, settings):
         ''' inserta al panel de configuración de kivy la configuracion de la aplicacion '''
@@ -129,6 +132,7 @@ class ThumbApp(App):
         dirthumbs = os.path.join(self.dirpathmovies, 'Thumbails')
         # print('dirthumbs:', dirthumbs)
         self.thumbview.ids.box.clear_widgets()
+        self.files=[]
         if os.path.exists(dirthumbs):
             for fe in os.listdir(dirthumbs):
                 if fe.endswith(exten):
@@ -138,8 +142,13 @@ class ThumbApp(App):
                     # Clock.schedule_once(partial(self.update_box_imagen, str(fex)))
                     # self.box.ids.box.add_widget(Splitfloat(source=fex, anim_delay= 1))
         self.title += ' ' + str(len(self.files))
-        threading.Thread(target=self.start_load_thread, args=(self.files,), daemon=False).start()
+        self.thumbview.ids._status_bar.ids.label_a.text = 'Total Thumbs: '+ str(len(self.files))
+        Clock.schedule_once(self.thread_load_files)
+        # threading.Thread(target=self.start_load_thread, args=(self.files,), daemon=False).start()
         #print('files:', self.files,', len:', len(self.files))
+
+    def thread_load_files(self, *args):
+        threading.Thread(target=self.start_load_thread, args=(self.files,), daemon=False).start()
 
     def start_load_thread(self, files=[]):
         try:
@@ -152,6 +161,32 @@ class ThumbApp(App):
     def update_box_imagen(self, file ):
         self.thumbview.ids.box.add_widget(Thumb(source=file))
         self.thumbview.ids.imgview.source = file
+
+    def aplicar(self, *args):
+        print('aplicar:', args)
+        dirmovies = self.thumbview.ids.idpath.text
+        if os.path.isdir(dirmovies):
+            print(f'exist directory: {dirmovies}')
+            dirmoviesthumbs = os.path.join(dirmovies, 'Thumbails')
+            if os.path.isdir(dirmoviesthumbs):
+                print(f'exist directory: {dirmoviesthumbs}')
+            else:
+                try:
+                    os.mkdir(dirmoviesthumbs, 0o666)
+                    print(f'make directory: {dirmoviesthumbs}')
+                except OSError as e:
+                    if e.errno != errno.EEXIST:
+                        raise
+            if self.directorio != dirmovies:
+                print(f'anterior: {self.directorio}, adiconado: {dirmovies}')
+                self.directorio = dirmovies
+                self.load_thread(self.directorio)
+                self.config.set('example','pathexample', str(self.directorio))
+                self.config.write()
+        else:
+            print(f'do not exist directory: {dirmovies}')
+            self.thumbview.ids.idpath.text = self.dirpathmovies
+            return 0
 
 
 if __name__ == '__main__':
