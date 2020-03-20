@@ -33,6 +33,7 @@
             # width: '500sp'
 
         Button:
+            id: btnaplicar
             text: "Aplicar"
             size_hint_x:  None
             width: '100sp' 
@@ -40,7 +41,7 @@
             height: '30sp'
             pos_hint: {'x':0, 'right': 1}
             on_release:
-                app.aplicar('a cada lado')
+                app.aplicar(self, 'argumento')
 
     BoxLayout:
         anchor_x:'center'
@@ -99,9 +100,10 @@
     orientation:'horizontal'
     padding:'2sp'
     Button:
+        id: btnanalisis
         text:'Analisis'
         on_release:
-            app.on_analisis()
+            app.on_analisis(self)
     Button:
         text:'Remove'
     Button:
