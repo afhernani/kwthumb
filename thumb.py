@@ -154,16 +154,25 @@ class ThumbApp(App):
         try:
             for file in files:
                 self.update_box_imagen(file)
+            self.disable_button()
         except:
             print('excepcion en start_load_thread')
-    
+        
+    @mainthread
+    def disable_button(self, *args):
+        if self.thumbview.ids.btnaplicar.disabled == True:
+            self.thumbview.ids.btnaplicar.disabled = False
     @mainthread
     def update_box_imagen(self, file ):
         self.thumbview.ids.box.add_widget(Thumb(source=file))
         self.thumbview.ids.imgview.source = file
 
-    def aplicar(self, *args):
+    def aplicar(self, instance, *args):
         print('aplicar:', args)
+        print('instance:', instance)
+        print(f'state: {instance.state}')
+        instance.disabled = True
+        print(f'state: {instance.state}')
         dirmovies = self.thumbview.ids.idpath.text
         if os.path.isdir(dirmovies):
             print(f'exist directory: {dirmovies}')
@@ -183,13 +192,17 @@ class ThumbApp(App):
                 self.load_thread(self.directorio)
                 self.config.set('example','pathexample', str(self.directorio))
                 self.config.write()
+            else:
+                instance.disabled = False
         else:
             print(f'do not exist directory: {dirmovies}')
             self.thumbview.ids.idpath.text = self.dirpathmovies
+            instance.disabled = False
             return 0
 
-    def on_analisis(self, *args):
+    def on_analisis(self, instance, *args):
         print('on_analisis: ', args)
+        instance.disabled = True
 
 if __name__ == '__main__':
     ThumbApp().run()
