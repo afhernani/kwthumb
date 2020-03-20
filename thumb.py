@@ -189,7 +189,7 @@ class ThumbApp(App):
             return 0
 
     def on_analisis(self, *args):
-        print('on_analisis: ' args)
+        print('on_analisis: ', args)
 
 if __name__ == '__main__':
     ThumbApp().run()
