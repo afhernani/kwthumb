@@ -164,8 +164,9 @@ class ThumbApp(App):
     def disable_button(self, *args):
         if self.thumbview.ids.btnaplicar.disabled == True:
             self.thumbview.ids.btnaplicar.disabled = False
-        if self.thumbview.ids.btnmake.disabled == True:
-            self.thumbview.ids.btnmake.disabled = False
+        if self.thumbview.general_option.ids.btnmake.disabled == True:
+            self.thumbview.general_option.ids.btnmake.disabled = False
+
     @mainthread
     def update_box_imagen(self, file ):
         self.thumbview.ids.box.add_widget(Thumb(source=file))
@@ -218,27 +219,43 @@ class ThumbApp(App):
         self.list_base, self.list_thumbs = items_only_a(self.dirpathmovies)
         self.thumbview.ids._status_bar.ids.label_b.text =f'on_make: files gif {str(len(self.list_base))}'
         # self.list_base, están los ficheros de video que no tienen gif y vamos a crearlos
-        threading.Thread(target=self.thread_make_gifs, args=(sefl.list_base, self.dirpathmovies, ), daemon=True).start()
+        threading.Thread(target=self.thread_make_gifs, args=(self.list_base, self.dirpathmovies, ), daemon=True).start()
 
     CANCEL = False # cancelar la orden de tarea.
-    def thread_make_gifs(self, list_base=[], paht='.'):
+
+    def thread_make_gifs(self, list_base=[], path='.'):
         try:
+            pendient= len(list_base)
             for item in list_base:
-                if not CANCEL:
+                if not self.CANCEL:
                     file =os.path.join(path, item)
                     giffile = os.path.join(path, 'Thumbails', item + '_thumbs_0000.gif')
+                    print(f'>>> thread_make_gifs, n:{pendient}, {file}, {giffile}')
                     movie = Movie(file)
                     movie.run()
+                    while movie.isAlive():
+                        pass
                     self.update_box_imagen(giffile)
+                    pendient -= 1
+                    self.update_mensaje_label_b(str(pendient))
                 else:
-                    CANCEL = False
+                    self.CANCEL = False
                     self.disable_button()
                     return
             self.disable_button()
         except OSError as e:
             print(e.message)
+        except e:
+            print(e.message)
+            self.thumbview.ids._status_bar.ids.label_b.text =f'on_make: except'
+            self.disable_button()
 
+    def on_cancel(self, instance):
+        self.CANCEL = True 
 
+    @mainthread
+    def update_mensaje_label_b(self, info='' ):
+        self.thumbview.ids._status_bar.ids.label_b.text =f'on_make: files gif {info}'
 
 if __name__ == '__main__':
     ThumbApp().run()
