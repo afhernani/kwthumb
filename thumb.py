@@ -166,6 +166,8 @@ class ThumbApp(App):
             self.thumbview.ids.btnaplicar.disabled = False
         if self.thumbview.general_option.ids.btnmake.disabled == True:
             self.thumbview.general_option.ids.btnmake.disabled = False
+        if self.thumbview.general_option.ids.btncancel.disabled == True:
+            self.thumbview.general_option.ids.btncancel.disabled = False
 
     @mainthread
     def update_box_imagen(self, file ):
@@ -251,6 +253,7 @@ class ThumbApp(App):
             self.disable_button()
 
     def on_cancel(self, instance):
+        instance.disabled = True
         self.CANCEL = True 
 
     @mainthread
