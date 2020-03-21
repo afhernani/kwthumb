@@ -105,7 +105,9 @@
         on_release:
             app.on_analisis(self)
     Button:
-        text:'Remove'
+        text:'Cancel'
+        on_release:
+            app.on_cancel(self)
     Button:
         id: btnmake
         text:'Make'
