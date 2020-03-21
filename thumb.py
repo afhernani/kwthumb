@@ -4,6 +4,7 @@ import os, sys
 import threading
 import errno
 import time
+from utility import items_only_a 
 import kivy
 kivy.require('1.10.0')
 from kivy.app import App
@@ -203,6 +204,14 @@ class ThumbApp(App):
     def on_analisis(self, instance, *args):
         print('on_analisis: ', args)
         instance.disabled = True
+        c, f = items_only_a(self.dirpathmovies)
+        print(f'c -> {c}; total: {len(c)}')
+        print(f'f -> {f}; total: {len(f)}')
+        self.thumbview.ids._status_bar.ids.label_b.text = 'Kivy pending thumb: '+ str(len(c))
+        instance.disabled = False
+
+    def on_make(self, instance, *args):
+        print('on_make:', instance)
 
 if __name__ == '__main__':
     ThumbApp().run()
