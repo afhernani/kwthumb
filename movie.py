@@ -201,11 +201,15 @@ class Movie:
             print('datos generales ->', self.datos)
             if self.widget is not None:
                 self.widget.event_generate('<<food>>', when='tail')
-
+    
+    thread=None
     def run(self):
-        thread = threading.Thread(target=self.make_gif)
-        thread.daemon = True
-        thread.start()
+        self.thread = threading.Thread(target=self.make_gif)
+        self.thread.daemon = True
+        self.thread.start()
+
+    def isAlive(self):
+        return self.thread.isAlive()
 
     def setwidget(self, widget=None):
         if widget is not None:
