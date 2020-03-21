@@ -21,6 +21,7 @@ from kivy.uix.image import Image
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.settings import SettingsWithSidebar, ConfigParser
 from settingsjson import settings_json
+from movie import Movie
 
 class ButtonThumb(ButtonBehavior, Image):
     def __init__(self, **kwargs):
@@ -163,6 +164,8 @@ class ThumbApp(App):
     def disable_button(self, *args):
         if self.thumbview.ids.btnaplicar.disabled == True:
             self.thumbview.ids.btnaplicar.disabled = False
+        if self.thumbview.ids.btnmake.disabled == True:
+            self.thumbview.ids.btnmake.disabled = False
     @mainthread
     def update_box_imagen(self, file ):
         self.thumbview.ids.box.add_widget(Thumb(source=file))
@@ -211,7 +214,31 @@ class ThumbApp(App):
         instance.disabled = False
 
     def on_make(self, instance, *args):
-        print('on_make:', instance)
+        instance.disabled = True
+        self.list_base, self.list_thumbs = items_only_a(self.dirpathmovies)
+        self.thumbview.ids._status_bar.ids.label_b.text =f'on_make: files gif {str(len(self.list_base))}'
+        # self.list_base, están los ficheros de video que no tienen gif y vamos a crearlos
+        threading.Thread(target=self.thread_make_gifs, args=(sefl.list_base, self.dirpathmovies, ), daemon=True).start()
+
+    CANCEL = False # cancelar la orden de tarea.
+    def thread_make_gifs(self, list_base=[], paht='.'):
+        try:
+            for item in list_base:
+                if not CANCEL:
+                    file =os.path.join(path, item)
+                    giffile = os.path.join(path, 'Thumbails', item + '_thumbs_0000.gif')
+                    movie = Movie(file)
+                    movie.run()
+                    self.update_box_imagen(giffile)
+                else:
+                    CANCEL = False
+                    self.disable_button()
+                    return
+            self.disable_button()
+        except OSError as e:
+            print(e.message)
+
+
 
 if __name__ == '__main__':
     ThumbApp().run()
