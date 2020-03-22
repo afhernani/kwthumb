@@ -258,7 +258,7 @@ class ThumbApp(App):
 
     @mainthread
     def update_mensaje_label_b(self, info='' ):
-        self.thumbview.ids._status_bar.ids.label_b.text =f'on_make: files gif {info}'
+        self.thumbview.ids._status_bar.ids.label_b.text =f'make files gif: {info}'
 
 if __name__ == '__main__':
     ThumbApp().run()
