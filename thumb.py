@@ -174,6 +174,12 @@ class ThumbApp(App):
         self.thumbview.ids.box.add_widget(Thumb(source=file))
         self.thumbview.ids.imgview.source = file
 
+    def on_enter(self,instance, value):
+        print(f'on _enter: instance: {instance}, value: {value}')
+        instance_btnaplicar = self.thumbview.ids.btnaplicar
+        self.aplicar(instance_btnaplicar)
+        # return super(TextInput,self).insert_text(substring, from_undo=from_undo)
+
     def aplicar(self, instance, *args):
         print('aplicar:', args)
         print('instance:', instance)
