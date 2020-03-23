@@ -4,7 +4,7 @@ import os, sys
 import threading
 import errno
 import time
-from utility import items_only_a 
+from utility import items_only_a, lunch_video
 import kivy
 kivy.require('1.10.0')
 from kivy.app import App
@@ -28,12 +28,12 @@ class ButtonThumb(ButtonBehavior, Image):
         super(ButtonThumb, self).__init__(**kwargs)
 
     def on_touch_down(self, touch):
-        if touch.is_double_tap:
-            print("double_tap") 
-            return True
-        else:
-            print("single_tap")
-            # return True
+        self.touched = True
+        if self.collide_point(touch.x, touch.y):
+            if touch.is_double_tap:
+                print(f"double_tap: {self.source}")
+                lunch_video(self.source)
+                return True
         return super().on_touch_down(touch)
 
 class Thumb(BoxLayout):
