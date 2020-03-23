@@ -4,7 +4,7 @@ import os, sys
 import threading
 import errno
 import time
-from utility import items_only_a, lunch_video
+from utility import items_only_a, lunch_video, lunch_video_default
 import kivy
 kivy.require('1.10.0')
 from kivy.app import App
@@ -32,7 +32,7 @@ class ButtonThumb(ButtonBehavior, Image):
         if self.collide_point(touch.x, touch.y):
             if touch.is_double_tap:
                 print(f"double_tap: {self.source}")
-                lunch_video(self.source)
+                lunch_video_default(self.source)
                 return True
         return super().on_touch_down(touch)
 
