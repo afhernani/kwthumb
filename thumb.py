@@ -106,7 +106,7 @@ class ThumbApp(App):
             me: MotionEvent    
                 The Motion Event currently dispatched.
          '''
-        print(f'on_motion_thumbapp: {window}, {etype}, {me}')
+        # print(f'on_motion_thumbapp: {window}, {etype}, {me}')
         pass
     
     def on_draw_thumbapp(self, window, *args):
