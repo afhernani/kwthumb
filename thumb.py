@@ -89,6 +89,7 @@ class ThumbApp(App):
         ''' lunch after build and start window '''
         Window.bind(on_resize=self.on_resize_thumbapp)
         Window.bind(on_motion=self.on_motion_thumbapp)
+        Window.bind(on_draw=self.on_draw_thumbapp)
         # print('on_start')
         w, h, t, l = self.get_sizewindow(self.config.get('example','sizewindow'))
         # print(w, h, t, l)
@@ -96,9 +97,26 @@ class ThumbApp(App):
         Window.Top = int(t)
         Window.left = int(l)
 
-    def on_motion_thumbapp(self, instance, etype, me):
-        ''' arrastrando el raton '''
-        ppass
+    def on_motion_thumbapp(self, window, etype, me):
+        ''' arrastrando el raton
+        Parameters:	
+            window: instancie window
+            etype: str 
+                One of ‘begin’, ‘update’, ‘end’ 
+            me: MotionEvent    
+                The Motion Event currently dispatched.
+         '''
+        print(f'on_motion_thumbapp: {window}, {etype}, {me}')
+        pass
+    
+    def on_draw_thumbapp(self, window, *args):
+        ''' draw window 
+            Parmeters:
+                window: instance window.
+                *args:
+        '''
+        # print('on_draw_thumbapp: ', window, args)
+        pass
 
     def build(self):
         '''constructor de la aplicacion '''
