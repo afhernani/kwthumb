@@ -75,6 +75,8 @@ class Mensaje(Label):
         self.size = self.texture_size
         self.height += sp(20)
 
+from kivy.config import Config
+from kivy.core.window import Window
 
 class ThumbApp(App):
     def on_stop(self):
@@ -82,14 +84,24 @@ class ThumbApp(App):
         # otherwise the app window will close, but the Python process will
         # keep running until all secondary threads exit.
         self.root.stop.set()
+    
+    def on_start(self, **kvargs):
+        # print('on_start')
+        w, h, t, l = self.get_sizewindow(self.config.get('example','sizewindow'))
+        # print(w, h, t, l)
+        Window.size = (int(w), int(h))
+        Window.Top = int(t)
+        Window.left = int(l)
 
     def build(self):
         '''constructor de la aplicacion '''
+        Window.bind(on_resize=self.on_resize_thumbapp)
         self.settings_cls = SettingsWithSidebar
         self.files=[]
         # files = ['bbt.gif', 'huge.gif', 'kingy-anal.gif', 'mellons.gif', 'mother.gif']
         ''' lee un registro configuración de la app '''
         self.directorio  = self.config.get('example', 'pathexample')
+        # print(self.config.get('example','sizewindow'))
         # directorio = 'F:\\tmp\\VSDG_E'
         # directorio = 'F:\\tmp\\_Clasic_moom'
         # self.thumbview = ThumbView(files=files)
@@ -97,6 +109,26 @@ class ThumbApp(App):
         self.load_thread(self.directorio)
         return self.thumbview
     
+    def on_resize_thumbapp(self, instancie, width, height):
+        '''Event called when the window is resized'''
+        print(f'window.size {str(width)}, {str(height)}')
+        print(f'instancie: {instancie.top}, {instancie.left}')
+        variable = str(width)+'x'+ str(height) + 'x' + str(instancie.top) + 'x' + str(instancie.left)
+        print('variable: '+ variable)
+        self.config.set('example', 'sizewindow', variable)
+        self.config.write()
+        '''
+        Config.set('graphics', 'resizable', 1)
+        Config.set('graphics', 'position', 'custom')
+        Config.set('graphics', 'widht', str(width))
+        Config.set('graphics', 'height', str(height))
+        Config.set('graphics', 'top', str(instancie.top))
+        Config.set('graphics', 'left', str(instancie.left))
+        Config.write() '''
+
+    def get_sizewindow(self, cadena):
+        return cadena.split('x')
+
     def build_config(self, config):
         ''' establece configuracion por defecto de la app, si no existe el fichero
         settings.ini, lo crea y adiciona los valores por defecto '''
@@ -105,6 +137,7 @@ class ThumbApp(App):
             'numericexample': 10,
             'optionsexample': 'option2',
             'stringexample':'some_string',
+            'sizewindow' : '500x900x100x100',
             'pathexample':'f:/tmp/VSDG_E'
         })
         # self.config = config
