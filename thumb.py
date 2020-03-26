@@ -75,7 +75,7 @@ class Mensaje(Label):
         self.size = self.texture_size
         self.height += sp(20)
 
-from kivy.config import Config
+# from kivy.config import Config
 from kivy.core.window import Window
 
 class ThumbApp(App):
@@ -86,6 +86,9 @@ class ThumbApp(App):
         self.root.stop.set()
     
     def on_start(self, **kvargs):
+        ''' lunch after build and start window '''
+        Window.bind(on_resize=self.on_resize_thumbapp)
+        Window.bind(on_motion=self.on_motion_thumbapp)
         # print('on_start')
         w, h, t, l = self.get_sizewindow(self.config.get('example','sizewindow'))
         # print(w, h, t, l)
@@ -93,9 +96,12 @@ class ThumbApp(App):
         Window.Top = int(t)
         Window.left = int(l)
 
+    def on_motion_thumbapp(self, instance, etype, me):
+        ''' arrastrando el raton '''
+        ppass
+
     def build(self):
         '''constructor de la aplicacion '''
-        Window.bind(on_resize=self.on_resize_thumbapp)
         self.settings_cls = SettingsWithSidebar
         self.files=[]
         # files = ['bbt.gif', 'huge.gif', 'kingy-anal.gif', 'mellons.gif', 'mother.gif']
