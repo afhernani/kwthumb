@@ -16,6 +16,8 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.textinput import TextInput
 from kivy.uix.label import Label
+from kivy.uix.button import Button
+from kivy.uix.popup import Popup
 from kivy.metrics import sp
 from kivy.uix.image import Image
 from kivy.uix.behaviors import ButtonBehavior
@@ -87,9 +89,10 @@ class ThumbApp(App):
     
     def on_start(self, **kvargs):
         ''' lunch after build and start window '''
-        Window.bind(on_resize=self.on_resize_thumbapp)
-        Window.bind(on_motion=self.on_motion_thumbapp)
-        Window.bind(on_draw=self.on_draw_thumbapp)
+        Window.bind(on_resize=self.on_resize)
+        # Window.bind(on_motion=self.on_motion_thumbapp)
+        # Window.bind(on_draw=self.on_draw_thumbapp)
+        Window.bind(on_request_close=self.on_request_close)
         # print('on_start')
         w, h, t, l = self.get_sizewindow(self.config.get('example','sizewindow'))
         # print(w, h, t, l)
@@ -97,7 +100,31 @@ class ThumbApp(App):
         Window.Top = int(t)
         Window.left = int(l)
 
-    def on_motion_thumbapp(self, window, etype, me):
+    def on_request_close(self, *args):
+        self.textpopup(title='Exit', text='Are you sure?')
+        return True
+
+    def textpopup(self, title='', text=''):
+        """Open the pop-up with the name.
+ 
+        :param title: title of the pop-up to open
+        :type title: str
+        :param text: main text of the pop-up to open
+        :type text: str
+        :rtype: None
+        """
+        box = BoxLayout(orientation='vertical')
+        box.add_widget(Label(text=text))
+        mybutton = Button(text='OK', size_hint=(1, 0.25))
+        box.add_widget(mybutton)
+        popup = Popup(title=title, content=box, size_hint=(None, None), size=(600, 300))
+        mybutton.bind(on_release=self.stop)
+        popup.open()
+
+    def on_stop(self):
+        print('on_stop: ')
+
+    def on_motion(self, window, etype, me):
         ''' arrastrando el raton
         Parameters:	
             window: instancie window
@@ -109,7 +136,7 @@ class ThumbApp(App):
         # print(f'on_motion_thumbapp: {window}, {etype}, {me}')
         pass
     
-    def on_draw_thumbapp(self, window, *args):
+    def on_draw(self, window, *args):
         ''' draw window 
             Parmeters:
                 window: instance window.
@@ -133,7 +160,7 @@ class ThumbApp(App):
         self.load_thread(self.directorio)
         return self.thumbview
     
-    def on_resize_thumbapp(self, instancie, width, height):
+    def on_resize(self, instancie, width, height):
         '''Event called when the window is resized'''
         print(f'window.size {str(width)}, {str(height)}')
         print(f'instancie: {instancie.top}, {instancie.left}')
