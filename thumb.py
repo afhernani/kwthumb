@@ -93,12 +93,26 @@ class ThumbApp(App):
         # Window.bind(on_motion=self.on_motion_thumbapp)
         # Window.bind(on_draw=self.on_draw_thumbapp)
         Window.bind(on_request_close=self.on_request_close)
+        # self._keyboard = Window.request_keyboard(self._keyboard_closed, self, 'text')
+        Window.bind(on_keyboard=self.on_keyboard)
         # print('on_start')
         w, h, t, l = self.get_sizewindow(self.config.get('example','sizewindow'))
         # print(w, h, t, l)
         Window.size = (int(w), int(h))
         Window.Top = int(t)
         Window.left = int(l)
+
+    def on_keyboard(self, keyboard, key, text, modifiers, *args):
+        print(f'{keyboard}, {key}, {text}, {modifiers}, {args}')
+        if key == 'left':
+            self.x -= 10
+        if key == 'right':
+            self.x +=10
+        if key == 'up':
+            self.y +=10
+        if key == 'down':
+            self.y -=10
+        return True
 
     def on_request_close(self, *args):
         self.textpopup(title='Exit', text='Are you sure?')
