@@ -27,7 +27,7 @@ settings_json = json.dumps([
     {'type':'string',
     'title':'A string setting size',
     'desc':'String description size window text',
-    'section':'size',
+    'section':'example',
     'key': 'sizewindow'},
     {'type':'path',
     'title':'A path setting',
