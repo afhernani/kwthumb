@@ -131,11 +131,12 @@ class ThumbApp(App):
         box.add_widget(Label(text=text))
         mybutton = Button(text='OK', size_hint=(1, 0.25))
         box.add_widget(mybutton)
-        popup = Popup(title=title, content=box, size_hint=(None, None), size=(600, 300))
-        mybutton.bind(on_release=self.stop)
+        popup = Popup(title=title, content=box, size_hint=(None, None), size=(300, 200))
+        mybutton.bind(on_release=self.stop) # manda detener la aplicación
         popup.open()
 
     def on_stop(self):
+        ''' se dispara el evento al iniciarse la detencion de la aplicacion '''
         print('on_stop: ')
 
     def on_motion(self, window, etype, me):
@@ -251,9 +252,11 @@ class ThumbApp(App):
         threading.Thread(target=self.start_load_thread, args=(self.files,), daemon=False).start()
 
     def start_load_thread(self, files=[]):
+        from time import sleep
         try:
             for file in files:
                 self.update_box_imagen(file)
+                sleep(0.5)
             self.disable_button()
         except:
             print('excepcion en start_load_thread')
