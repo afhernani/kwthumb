@@ -8,11 +8,12 @@ import threading
 
 __autor__ = 'Hernani Aleman Ferraz'
 __email__ = 'afhernani@gmail.com'
-__apply__ = 'commun for kvthumb'
-__version__ = 1.1
+__apply__ = 'commun for autogif, guimovietogif'
+__version__ = 1.0
 
 class Movie:
     def __init__(self, file, remove=True):
+        self.thread = None
         self.widget = None
         self.datos = {'time': 0, 'fps': 1, 'width': 1, 'height': 1, 'bitrate': 1, 'num': 1}
         self.exists = False
@@ -201,8 +202,7 @@ class Movie:
             print('datos generales ->', self.datos)
             if self.widget is not None:
                 self.widget.event_generate('<<food>>', when='tail')
-    
-    thread=None
+
     def run(self):
         self.thread = threading.Thread(target=self.make_gif)
         self.thread.daemon = True
