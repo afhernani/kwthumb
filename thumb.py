@@ -85,8 +85,10 @@ class ThumbApp(App):
         # The Kivy event loop is about to stop, set a stop signal;
         # otherwise the app window will close, but the Python process will
         # keep running until all secondary threads exit.
+        ''' se dispara el evento al iniciarse la detencion de la aplicacion '''
+        print('on_stop: ')
         self.root.stop.set()
-    
+
     def on_start(self, **kvargs):
         ''' lunch after build and start window '''
         Window.bind(on_resize=self.on_resize)
@@ -104,14 +106,6 @@ class ThumbApp(App):
 
     def on_keyboard(self, keyboard, key, text, modifiers, *args):
         print(f'{keyboard}, {key}, {text}, {modifiers}, {args}')
-        if key == 'left':
-            self.x -= 10
-        if key == 'right':
-            self.x +=10
-        if key == 'up':
-            self.y +=10
-        if key == 'down':
-            self.y -=10
         return True
 
     def on_request_close(self, *args):
@@ -134,10 +128,6 @@ class ThumbApp(App):
         popup = Popup(title=title, content=box, size_hint=(None, None), size=(300, 200))
         mybutton.bind(on_release=self.stop) # manda detener la aplicación
         popup.open()
-
-    def on_stop(self):
-        ''' se dispara el evento al iniciarse la detencion de la aplicacion '''
-        print('on_stop: ')
 
     def on_motion(self, window, etype, me):
         ''' arrastrando el raton
@@ -225,6 +215,7 @@ class ThumbApp(App):
 
     def load_thread(self, dirpath='.'):
         from functools import partial
+        self.total = 0
         self.dirpathmovies = dirpath
         self.title='Splitfloat :: ' + self.dirpathmovies
         self.thumbview.ids.idpath.text = self.dirpathmovies
@@ -270,10 +261,14 @@ class ThumbApp(App):
         if self.thumbview.general_option.ids.btncancel.disabled == True:
             self.thumbview.general_option.ids.btncancel.disabled = False
 
+    total = 0
+
     @mainthread
     def update_box_imagen(self, file ):
         self.thumbview.ids.box.add_widget(Thumb(source=file))
         self.thumbview.ids.imgview.source = file
+        self.total += 1
+        self.thumbview.ids._status_bar.ids.label_a.text = 'Total Thumbs: ' + str(self.total) + '/' + str(len(self.files))
 
     def on_enter(self,instance, value):
         print(f'on _enter: instance: {instance}, value: {value}')
