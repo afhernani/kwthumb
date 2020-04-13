@@ -347,10 +347,10 @@ class ThumbApp(App):
                     return
             self.disable_button()
         except OSError as e:
-            print(e.message)
-        except e:
-            print(e.message)
-            self.thumbview.ids._status_bar.ids.label_b.text =f'on_make: except'
+            print(e.args)
+        except Exception as e:
+            print(e.args)
+            self.thumbview.ids._status_bar.ids.label_b.text =f'on_make: except: {e.args}'
             self.disable_button()
 
     def on_cancel(self, instance):
