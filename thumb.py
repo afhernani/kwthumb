@@ -154,6 +154,7 @@ class ThumbApp(App):
         '''constructor de la aplicacion '''
         self.settings_cls = SettingsWithSidebar
         self.files=[]
+        self.total = 0
         # files = ['bbt.gif', 'huge.gif', 'kingy-anal.gif', 'mellons.gif', 'mother.gif']
         ''' lee un registro configuración de la app '''
         self.directorio  = self.config.get('example', 'pathexample')
@@ -260,8 +261,6 @@ class ThumbApp(App):
             self.thumbview.general_option.ids.btnmake.disabled = False
         if self.thumbview.general_option.ids.btncancel.disabled == True:
             self.thumbview.general_option.ids.btncancel.disabled = False
-
-    total = 0
 
     @mainthread
     def update_box_imagen(self, file ):
