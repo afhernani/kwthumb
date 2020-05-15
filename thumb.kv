@@ -1,4 +1,6 @@
 #:kivy 1.10.0
+#:import VideoPlayer kivy.uix.videoplayer
+#:set _default_video  "video/wot-tanks.mp4"
 
 <ThumbView>:
     orientation:'vertical'
@@ -56,13 +58,16 @@
                 size_hint_y:None
                 height:self.minimum_height
     BoxLayout:
+        id:boxvideo
         size_hint:(1,.3)
         # height:root.ids.imgview.height 
-        Image:
-            id:imgview
-            anim_delay: 1
-            mipmap: True
-            allow_stretch: True
+        # VideoPlayer:
+        #    id:imgview
+        #    source:_default_video
+        #    state:'play'
+            # anim_delay: 1
+            # mipmap: True
+            # allow_stretch: True
             
 
     BoxLayout:
@@ -91,7 +96,8 @@
         size_hint_x:None
         width:'200sp'
         on_release:
-            app.root.ids.imgview.source=root.ids.imgview.source
+            source = root.ids.imgview.source
+            app.thumbview.change_video(source)
             root.addate_image(root.ids.imgview.source)
     Mensaje:
         id:label
