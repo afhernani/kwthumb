@@ -24,6 +24,7 @@ from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.settings import SettingsWithSidebar, ConfigParser
 from settingsjson import settings_json
 from movie import Movie
+from kivy.uix.videoplayer import VideoPlayer
 
 class ButtonThumb(ButtonBehavior, Image):
     def __init__(self, **kwargs):
@@ -53,9 +54,11 @@ class Thumb(BoxLayout):
 
 class ThumbView(BoxLayout):
     stop = threading.Event()
-    files=[]
     def __init__(self, files=[], **kwargs):
         super().__init__(**kwargs)
+        self.m_video = VideoPlayer(source='video/wot-tanks.mp4', state='play', 
+                                 options={'allow_stretch': True, 'eos': 'loop'} )
+        self.ids.boxvideo.add_widget(self.m_video)
         self.files=files
         for file in self.files:
             self.ids.box.add_widget(Thumb(source=file))
@@ -63,6 +66,15 @@ class ThumbView(BoxLayout):
             if key=='source':
                 self.files.append(value)
 
+    def change_video(self, instancia):
+        print('change_video')
+        _video_name = os.path.basename(instancia).split("_thumbs_")[0]
+        _dirname = instancia.split('Thumbails')[0]
+        _video = os.path.join(_dirname,  _video_name)
+        if os.path.exists(_video):
+            self.m_video.source= _video
+        else:
+            print('file not found:', _video)
 
 class Mensaje(Label):
     def __init__(self, **kwargs):
@@ -265,7 +277,7 @@ class ThumbApp(App):
     @mainthread
     def update_box_imagen(self, file ):
         self.thumbview.ids.box.add_widget(Thumb(source=file))
-        self.thumbview.ids.imgview.source = file
+        # self.thumbview.ids.imgview.source = file
         self.total += 1
         self.thumbview.ids._status_bar.ids.label_a.text = 'Total Thumbs: ' + str(self.total) + '/' + str(len(self.files))
 
