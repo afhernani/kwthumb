@@ -25,6 +25,16 @@ from kivy.uix.settings import SettingsWithSidebar, ConfigParser
 from settingsjson import settings_json
 from movie import Movie
 from kivy.uix.videoplayer import VideoPlayer
+try:
+    from kivy.garden.xpopup.tools import *
+    from kivy.garden.xpopup.file import XFolder
+except ImportError as error:
+    print('you might install librery kivy.garden.xpopup', str(error.args))
+
+__author__='hernani'
+__email__ = 'afhernani@gmail.com'
+__apply__ = 'thumb app for gif and viedo viewer'
+__version__ = 0.1
 
 class ButtonThumb(ButtonBehavior, Image):
     def __init__(self, **kwargs):
@@ -280,6 +290,31 @@ class ThumbApp(App):
         # self.thumbview.ids.imgview.source = file
         self.total += 1
         self.thumbview.ids._status_bar.ids.label_a.text = 'Total Thumbs: ' + str(self.total) + '/' + str(len(self.files))
+
+    def _folder_dialog(self, instance, *args):
+        road = self.thumbview.ids.idpath.text
+        # print('_folder_dialog:', road)
+        if os.path.exists(road):
+            Factory.XFolder(on_dismiss=self._filepopup_callback, path=road)
+        else:
+            road = os.path.abspath(__file__)
+            Factory.XFolder(on_dismiss=self._filepopup_callback, path=road)
+
+    def _filepopup_callback(self, instance, *args):
+        # print('_filepopup_callback', instance, instance.path)
+        # print('_filepopup_callback', instance.__class__.__name__)
+        if instance.is_canceled():
+            return
+        if instance.__class__.__name__ == 'XFolder':
+            self._folder(instance.path)
+            # print('ooohh')
+        
+    def _folder(self, path, *args):
+        # print('_folder', path)
+        self.thumbview.ids.idpath.text = path
+        instance = self.thumbview.ids.btnaplicar
+        self.aplicar(instance)
+        # print('_folder', instance)
 
     def on_enter(self,instance, value):
         print(f'on _enter: instance: {instance}, value: {value}')
