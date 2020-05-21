@@ -45,7 +45,8 @@
             height: '30sp'
             pos_hint: {'x':0, 'right': 1}
             on_release:
-                app.aplicar(self, 'argumento')
+                app._folder_dialog(self)
+                # app.aplicar(self, 'argumento')
 
     BoxLayout:
         anchor_x:'center'
