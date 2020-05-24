@@ -20,6 +20,7 @@ from kivy.uix.button import Button
 from kivy.uix.popup import Popup
 from kivy.metrics import sp
 from kivy.uix.image import Image
+from kivy.graphics import Line, Rectangle, Color
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.settings import SettingsWithSidebar, ConfigParser
 from settingsjson import settings_json
@@ -41,17 +42,22 @@ class ButtonThumb(ButtonBehavior, Image):
         super(ButtonThumb, self).__init__(**kwargs)
 
     def on_touch_down(self, touch):
-        self.touched = True
+        
         if self.collide_point(touch.x, touch.y):
             if touch.is_double_tap:
                 print(f"double_tap: {self.source}")
                 lunch_video_default(self.source)
+                self.touched = True
                 return True
-        return super().on_touch_down(touch)
+            self.touched = True
+            #return True
+        return super(ButtonThumb, self).on_touch_down(touch)
+
 
 class Thumb(BoxLayout):
     def __init__(self, source, **kwargs):
         super(Thumb, self).__init__(**kwargs)
+        self.selected = None
         # si existe el fichero lo adicionamos, si no, 
         # no lo adicionamos.
         if os.path.exists(source):
@@ -60,6 +66,44 @@ class Thumb(BoxLayout):
 
     def addate_image(self, th):
         print('action_image:', th.encode('utf-8'))
+
+    def on_touch_down(self, touch):
+        
+        if self.collide_point(touch.x, touch.y):
+            if self.btntoggle.state == 'down':
+                if not self.selected:
+                    self.select()
+                else:
+                    self.unselect()
+            self.touched = True
+            #return True
+        return super(Thumb, self).on_touch_down(touch)
+
+    def select(self):
+        print('select()', self.top)
+        if not self.selected:
+            # self.ix, self.iy = self.to_widget(self.x, self.y)
+            # self.ix = self.center_x
+            # self.iy = self.center_y
+            with self.canvas:
+                Color(.234, .456, .678, .4)
+                self.selected = Rectangle(pos = self.pos, 
+                                          size =(self.width, 
+                                              self.height ), 
+                                          dash_offset=2, color=(1,1,1), width=10)
+            # Update the canvas as the screen size change 
+            self.bind(pos = self.update_rect,)
+
+    def update_rect(self, *args):
+        self.selected.pos = self.pos
+
+    def unselect(self):
+        print('unselect()')
+        if self.selected:
+            self.unbind(pos=self.update_rect,)
+            self.canvas.remove(self.selected)
+            # self.remove(self.selected)
+            self.selected = None
 
 
 class ThumbView(BoxLayout):
@@ -407,6 +451,19 @@ class ThumbApp(App):
     @mainthread
     def update_mensaje_label_b(self, info='' ):
         self.thumbview.ids._status_bar.ids.label_b.text =f'make files gif: {info}'
+
+    def on_btn_open(self, instance):
+        boxes = self.thumbview.ids.box
+        childrens= boxes.children[:]
+        selected =[]
+        for child in childrens:
+            if child.selected:
+                selected.append(child.ids.imgview.source)
+                child.unselect()
+            # print(child.ids.imgview.source, child.__class__.__name__)
+        for item in selected:
+            print('selected ->>', item)
+
 
 if __name__ == '__main__':
     ThumbApp().run()

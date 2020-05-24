@@ -89,6 +89,13 @@
 <Thumb>:
     size_hint_y:None
     height:'130sp'
+    btntoggle: app.thumbview.ids._general_option.ids.btntoggle
+    canvas:
+        Color:
+            rgba: 0, 0, 0, 0
+        Rectangle:
+            size:self.size
+            pos:self.pos
     ButtonThumb:
         id:imgview
         anim_delay: 1.5
@@ -125,11 +132,14 @@
             app.on_make(self)
     Button:
         text:'Open'
+        on_release:
+            app.on_btn_open(self)
     Button:
         text:'Settings'
         on_release:
             app.open_settings()
     ToggleButton:
+        id: btntoggle
         text:'Gestionar'
 
 <StatusBar@BoxLayout>:
