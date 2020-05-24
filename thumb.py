@@ -17,6 +17,7 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.textinput import TextInput
 from kivy.uix.label import Label
 from kivy.uix.button import Button
+from kivy.uix.dropdown import DropDown
 from kivy.uix.popup import Popup
 from kivy.metrics import sp
 from kivy.uix.image import Image
@@ -110,6 +111,9 @@ class ThumbView(BoxLayout):
     stop = threading.Event()
     def __init__(self, files=[], **kwargs):
         super().__init__(**kwargs)
+        self.filedropdown = FileDropDown()
+        self.filedropdown.bind(on_select=self.action_filedropdown)
+        self.general_option.ids.btnopen.bind(on_release=self.filedropdown.open)
         self.m_video = VideoPlayer(source='video/wot-tanks.mp4', state='play', 
                                  options={'allow_stretch': True, 'eos': 'loop'} )
         self.ids.boxvideo.add_widget(self.m_video)
@@ -129,6 +133,38 @@ class ThumbView(BoxLayout):
             self.m_video.source= _video
         else:
             print('file not found:', _video)
+
+    def action_filedropdown(self, instance, x):
+        print('action_filedropdown: \n',type(x), x)
+        print(type(instance), instance)
+        print('button select: ', x.text)
+        # mainbutton = self.container.ids._general_option.ids.btnFile
+        if x.text == 'Move ...':
+            print('Move, another not debuger')
+            # setattr(mainbutton, 'text', x.text)
+            #self._move_dialog(x)
+        if x.text == 'Copy ...':
+            print('Copy, another not debuger')
+            # setattr(mainbutton, 'text', x.text)
+            #self._copy_dialog(x)
+        if x.text == 'remove ...':
+            print('remove, another not debuger')
+            # setattr(mainbutton, 'text', x.text)
+            #self._remove_dialog(x)
+        if x.text == 'Open ...':
+            print('Open... , another not debuger')
+            #self._open_dialog(x)
+        if x.text == 'Save ...':
+            print('Save ..., another not debuger')
+            #self._save_dialog(x)
+        if x.text == 'Folder ...':
+            print('Folder ..., another not debuger')
+            #self._folder_dialog(x)
+
+
+class FileDropDown(DropDown):
+    pass
+
 
 class Mensaje(Label):
     def __init__(self, **kwargs):

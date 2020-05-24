@@ -131,9 +131,10 @@
         on_release:
             app.on_make(self)
     Button:
-        text:'Open'
-        on_release:
-            app.on_btn_open(self)
+        id: btnopen
+        text:'Open ...'
+        #on_release:
+        #    app.on_btn_open(self)
     Button:
         text:'Settings'
         on_release:
@@ -150,4 +151,43 @@
     Label:
         id: label_b
         text: 'Kivy started'
-    
+
+<FileDropDown>:
+    Button:
+        text: 'Open ...'
+        size_hint_y: None
+        height: '30sp'
+        on_release: root.select(self)
+    Button:
+        text: 'Save ...'
+        size_hint_y: None
+        height: '30sp'
+        on_release: root.select(self)
+    Button:
+        text: 'Folder ...'
+        size_hint_y: None
+        height: '30sp'
+        on_release: root.select(self)
+    Label:
+        text:''
+        size_hint_y:None
+        height:'10sp'
+    Button:
+        text: 'Move ...'
+        size_hint_y: None
+        height: '30sp'
+        on_release: root.select(self)
+    Button:
+        text: 'Copy ...'
+        size_hint_y: None
+        height: '30sp'
+        on_release: root.select(self)
+    Button:
+        text: 'remove ...'
+        size_hint_y: None
+        height: '30sp'
+        on_release: root.select(self)
+    Label:
+        text:''
+        size_hint_y:None
+        height:'10sp'
