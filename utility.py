@@ -35,7 +35,9 @@ def tarea(args=None):
         return
     os.startfile(args)
 
+# @staticmethod
 def open(file=None):
+    if not file: return
     if sys.platform == "win32":
         os.startfile(file)
     else:
