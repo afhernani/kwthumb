@@ -1,4 +1,4 @@
-# ! /usr/bin/env python3
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import os, sys
 import threading
@@ -27,11 +27,7 @@ from kivy.uix.settings import SettingsWithSidebar, ConfigParser
 from settingsjson import settings_json
 from movie import Movie
 from kivy.uix.videoplayer import VideoPlayer
-try:
-    from kivy.garden.xpopup.tools import *
-    from kivy.garden.xpopup.file import XFolder
-except ImportError as error:
-    print('you might install librery kivy.garden.xpopup', str(error.args))
+from hpopup import Folder
 
 __author__='hernani'
 __email__ = 'afhernani@gmail.com'
@@ -66,7 +62,7 @@ class Thumb(BoxLayout):
             self.ids.label.text = source
 
     def addate_image(self, th):
-        print('action_image:', th.encode('utf-8'))
+        print('addate_image:', th.encode('utf-8'))
 
     def on_touch_down(self, touch):
         
@@ -125,10 +121,11 @@ class ThumbView(BoxLayout):
                 self.files.append(value)
 
     def change_video(self, instancia):
-        print('change_video')
+        print('change_video:', instancia)
         _video_name = os.path.basename(instancia).split("_thumbs_")[0]
         _dirname = instancia.split('Thumbails')[0]
         _video = os.path.join(_dirname,  _video_name)
+        print('video:', _video)
         if os.path.exists(_video):
             self.m_video.source= _video
         else:
@@ -375,17 +372,19 @@ class ThumbApp(App):
         road = self.thumbview.ids.idpath.text
         # print('_folder_dialog:', road)
         if os.path.exists(road):
-            Factory.XFolder(on_dismiss=self._filepopup_callback, path=road)
+            # Factory.XFolder(on_dismiss=self._filepopup_callback, path=road)
+            Folder(on_dismiss=self._filepopup_callback, path=road)
         else:
             road = os.path.abspath(__file__)
-            Factory.XFolder(on_dismiss=self._filepopup_callback, path=road)
+            # Factory.XFolder(on_dismiss=self._filepopup_callback, path=road)
+            Folder(on_dismiss=self._filepopup_callback)
 
     def _filepopup_callback(self, instance, *args):
         # print('_filepopup_callback', instance, instance.path)
         # print('_filepopup_callback', instance.__class__.__name__)
         if instance.is_canceled():
             return
-        if instance.__class__.__name__ == 'XFolder':
+        if instance.__class__.__name__ == 'Folder':
             self._folder(instance.path)
             # print('ooohh')
         
