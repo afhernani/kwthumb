@@ -1,3 +1,92 @@
+"""
+Module progress.py
+======================
+
+This module contains the base class for all notifications. Also
+subclasses which implement some the base notifications functionality.
+
+Classes:
+
+* Progress: Notification with ProgressBar
+
+* Loading: Notification for Loading
+
+Progress class
+===============
+
+Subclass of :class:`hpopup.NotifyBase`.
+Represents :class:`~kivy.uix.progressbar.ProgressBar` in a popup. Properties
+:attr:`Progress.value` and :attr:`Progress.max` is binded to an
+appropriate properties of the :class:`~kivy.uix.progressbar.ProgressBar`.
+
+How to use it? Following example will create a `XProgress` object which has
+a title, a text message, and it displays 50% of progress::
+
+    popup = Progress(value=50, text='Request is being processed',
+                      title='Please wait')
+
+There are two ways to update the progress line.
+First way: simply assign a value to indicate the current progress::
+
+    # update progress to 80%
+    popup.value = 80
+
+Second way: use :meth:`Progress.inc`. This method will increase current
+progress by specified number of units::
+
+    # reset progress
+    popup.value = 0
+    # increase by 10 units
+    popup.inc(10)
+    # increase by 1 unit
+    popup.inc()
+
+By the way, if the result value exceeds the maximum value, this method is
+"looping" the progress. For example::
+
+    # init progress
+    popup = Progress(value=50)
+    # increase by 60 units - will display 10% of the progress
+    popup.inc(60)
+
+This feature is useful when it is not known the total number of iterations.
+Also in this case, a useful method is :meth:`Progress.complete`. It sets the
+progress to 100%, hides the button(s) and automatically closes the popup
+after 2 seconds::
+
+    # init progress
+    popup = Progress(value=50)
+    # complete the progress
+    popup.complete()
+
+.. versionadded:: 0.2.1
+    You can change the text and time-to-close using following parameters::
+
+        popup.complete(text='', show_time=0)
+
+    In that case, the popup will be closed immediately.
+
+.. versionadded:: 0.2.1
+    :meth:`Progress.autoprogress` starts infinite progress increase in the
+    separate thread i.e. you don't need to increase it manually. Will be
+    stopped automatically when the :meth:`Progress.complete` or
+    :meth:`Progress.dismiss` is called.
+
+
+Loading class
+===============
+
+.. versionadded:: 0.3.0
+
+Subclass of :class:`hpopup.HBase`.
+Shows a 'loading.gif' in the popup.
+
+Following example will create a `Loading` object using custom title and
+image::
+
+    popup = Loading(title='Your_title', gif='/your_path_to/loading.gif')
+
+"""
 
 from os.path import join
 from kivy import metrics, kivy_data_dir
