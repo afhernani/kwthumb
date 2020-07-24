@@ -48,10 +48,8 @@ from kivy.uix.image import Image
 from kivy.uix.progressbar import ProgressBar
 from kivy.logger import Logger
 try:
-    from .hbase import HBase
     from .notifybase import NotifyBase
 except:
-    from hbase import HBase
     from notifybase import NotifyBase
 
 __author__ = 'ophermit, Hernai'
