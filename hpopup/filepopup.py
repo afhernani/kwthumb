@@ -150,7 +150,7 @@ class FilePopup(HBase):
         lbl_path = Label(
             text=self.browser.path, valign='top', halign='left',
             size_hint_y=None, height=metrics.dp(25))
-        # self.browser.bind(path=lbl_path.setter('text'))
+        self.browser.bind(path=lbl_path.setter('text'))
 
         layout = BoxLayout(orientation='vertical')
         layout.add_widget(self._ctrls_init())
