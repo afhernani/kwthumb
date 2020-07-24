@@ -25,9 +25,11 @@ from kivy.graphics import Line, Rectangle, Color
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.settings import SettingsWithSidebar, ConfigParser
 from settingsjson import settings_json
+from kivy.properties import StringProperty
 from movie import Movie
 from kivy.uix.videoplayer import VideoPlayer
 from hpopup import Folder
+from hpopup import Copy, Move, Remove, Rename
 
 __author__='hernani'
 __email__ = 'afhernani@gmail.com'
@@ -105,6 +107,7 @@ class Thumb(BoxLayout):
 
 class ThumbView(BoxLayout):
     stop = threading.Event()
+    path_job = StringProperty(None)
     def __init__(self, files=[], **kwargs):
         super().__init__(**kwargs)
         self.filedropdown = FileDropDown()
@@ -143,7 +146,7 @@ class ThumbView(BoxLayout):
         if x.text == 'Copy ...':
             print('Copy, another not debuger')
             # setattr(mainbutton, 'text', x.text)
-            #self._copy_dialog(x)
+            self._copy_dialog(x)
         if x.text == 'remove ...':
             print('remove, another not debuger')
             # setattr(mainbutton, 'text', x.text)
@@ -157,6 +160,39 @@ class ThumbView(BoxLayout):
         if x.text == 'Folder ...':
             print('Folder ..., another not debuger')
             #self._folder_dialog(x)
+    
+    def _copy_dialog(self, instance):
+        boxes = self.ids.box
+        childrens= boxes.children[:]
+        selected =[]
+        for child in childrens:
+            if child.selected:
+                selected.append(child.ids.imgview.source)
+                child.unselect()
+            # print(child.ids.imgview.source, child.__class__.__name__)
+        all_archives = self._createlistselected(selected)
+        if self.path_job is None:
+            self.path_job =os.path.dirname(all_archives[1])
+        for item in all_archives:
+            print('selected ->>', item)
+        Copy(files=all_archives, on_dismiss=self.my_callback, path=self.path_job)
+
+
+    def my_callback(self, instance):
+        self.path_job = instance.path
+
+    def _createlistselected(self, selected=[])->[]:
+        todos_los_archivos =  []
+        for item in selected:
+            filename = os.path.basename(item)
+            pathfileimage = os.path.dirname(item)
+            ops = pathfileimage.split(os.sep)
+            ops2 = ops[:len(ops)-1]
+            pathfilevideo = os.sep.join(ops2)
+            filenamevideo = filename.split('_thumbs_')[0]
+            _video = os.path.join(pathfilevideo, filenamevideo)
+            todos_los_archivos.extend([item, _video])
+        return todos_los_archivos
 
 
 class FileDropDown(DropDown):
