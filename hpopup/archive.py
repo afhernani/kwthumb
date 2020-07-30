@@ -50,7 +50,7 @@ except:
     from hbase import HBase
 
 __author__ = 'hernai'
-__all__ = ('Copy', 'Move', 'Remove', 'Rename')
+__all__ = ('Copy', 'Move', 'Remove')
 
 class Archy(HBase):
     """Copy class. See module documentation for more information.
@@ -269,6 +269,46 @@ class Rename(Archy):
                 Error(text='Don`t panic!. '+ str(e.args))
 
 
+class Box(object):
+
+    def __init__(self, movie=None, picture=None, **kvargs):
+        self.seted = False
+        self.movie = movie
+        self.picture = picture
+        if self.movie is None and self.picture is not None:
+            self.setmovie()
+        elif self.movie is not None and self.picture is None:
+            self.setpicture()
+        else:
+            self.seted = True
+        super(Box, self).__init__()
+    
+    def setmovie(self):
+        
+        filenameimage = os.path.basename(self.picture)
+        pathfileimage = os.path.dirname(self.picture)
+        ops = pathfileimage.split(os.sep)
+        ops2 = ops[:len(ops)-1]
+        pathfilevideo = os.sep.join(ops2)
+        filenamevideo = filenameimage.split('_thumbs_')[0]
+        self.movie = os.path.join(pathfilevideo, filenamevideo)
+        self.seted = True
+
+    def setpicture(self):
+        
+        filenamevideo = os.path.basename(self.movie)
+        pathfilevideo = os.path.dirname(self.movie)
+        pathfileimage = os.path.join(pathfilevideo, 'Thumbais')
+        filenameimage = filenamevideo + '_thumbs_0000.gif'
+        self.picture = os.path.join(pathfileimage, filenameimage)
+        self.seted = True
+
+    def __str__(self, *args):
+        return "{ \"video\":" + f" {self.movie}, " + "\"picture\":"+ f" {self.picture}"+" }"
+
+    def __repr__(self, *args):
+        return self.__str__()
+
 # comprobaciones.
 
 from kivy.app import App
@@ -282,6 +322,7 @@ class TestApp(App):
         label.add_widget(Button(text='move', on_release=self.btnmove))
         label.add_widget(Button(text='remove', on_release=self.btnremove))
         label.add_widget(Button(text='rename', on_release=self.btnrename))
+        label.add_widget(Button(text='Box', on_release=self.boxes))
         return label
 
     def btncopy(self, *args):
@@ -313,6 +354,16 @@ class TestApp(App):
 
         Logger.info(msg=s_message)
         
-        
+    def boxes(self, *args):
+        video = '/media/hernani/WDatos/tmp/_Asian_baby/7eddd05f7c77ace2e996c99a8740f6c0.mp4'
+        picture = '/media/hernani/WDatos/tmp/_Asian_baby/Thumbails/26d59945395e045e8ea79a0969d71140.mp4_thumbs_0000.gif'
+        box = Box(movie=video)
+        box1 = Box(picture=picture)
+        print(box)
+        print(box1)
+        boxlist = [box, box1]
+        print(boxlist)
+
+
 if __name__ == '__main__':
     TestApp().run()
