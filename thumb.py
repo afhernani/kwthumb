@@ -29,7 +29,7 @@ from kivy.properties import StringProperty
 from movie import Movie
 from kivy.uix.videoplayer import VideoPlayer
 from hpopup import Folder
-from hpopup import Copy, Move, Remove, Rename
+from hpopup import Copy, Move, Remove, Rename, Box
 
 __author__='hernani'
 __email__ = 'afhernani@gmail.com'
@@ -140,11 +140,11 @@ class ThumbView(BoxLayout):
         print('button select: ', x.text)
         # mainbutton = self.container.ids._general_option.ids.btnFile
         if x.text == 'Move ...':
-            print('Move, another not debuger')
+            print('Move')
             # setattr(mainbutton, 'text', x.text)
-            #self._move_dialog(x)
+            self._move_dialog(x)
         if x.text == 'Copy ...':
-            print('Copy, another not debuger')
+            print('Copy')
             # setattr(mainbutton, 'text', x.text)
             self._copy_dialog(x)
         if x.text == 'remove ...':
@@ -161,6 +161,23 @@ class ThumbView(BoxLayout):
             print('Folder ..., another not debuger')
             #self._folder_dialog(x)
     
+    def _move_dialog(self, instance):
+        boxes = self.ids.box
+        childrens= boxes.children[:]
+        selected =[]
+        for child in childrens:
+            if child.selected:
+                selected.append(child.ids.imgview.source)
+                child.unselect()
+                boxes.remove_widget(child)
+            # print(child.ids.imgview.source, child.__class__.__name__)
+        all_archives = self._createlistselected(selected)
+        if self.path_job is None:
+            self.path_job =os.path.dirname(all_archives[0].movie)
+        for item in all_archives:
+            print('selected ->>', item)
+        Move(files=all_archives, on_dismiss=self.my_callback, path=self.path_job)
+
     def _copy_dialog(self, instance):
         boxes = self.ids.box
         childrens= boxes.children[:]
@@ -172,7 +189,7 @@ class ThumbView(BoxLayout):
             # print(child.ids.imgview.source, child.__class__.__name__)
         all_archives = self._createlistselected(selected)
         if self.path_job is None:
-            self.path_job =os.path.dirname(all_archives[1])
+            self.path_job =os.path.dirname(all_archives[0].movie)
         for item in all_archives:
             print('selected ->>', item)
         Copy(files=all_archives, on_dismiss=self.my_callback, path=self.path_job)
@@ -184,14 +201,8 @@ class ThumbView(BoxLayout):
     def _createlistselected(self, selected=[])->[]:
         todos_los_archivos =  []
         for item in selected:
-            filename = os.path.basename(item)
-            pathfileimage = os.path.dirname(item)
-            ops = pathfileimage.split(os.sep)
-            ops2 = ops[:len(ops)-1]
-            pathfilevideo = os.sep.join(ops2)
-            filenamevideo = filename.split('_thumbs_')[0]
-            _video = os.path.join(pathfilevideo, filenamevideo)
-            todos_los_archivos.extend([item, _video])
+            box = Box(picture=item)
+            todos_los_archivos.append(box)
         return todos_los_archivos
 
 
