@@ -49,8 +49,8 @@ except:
     from notification import Notification, Message, Error, Confirmation
     from hbase import HBase
 
-__author__ = 'hernai'
-__all__ = ('Copy', 'Move', 'Remove')
+__author__ = 'hernani'
+__all__ = ('Copy', 'Move', 'Remove', 'Rename', 'Box')
 
 class Archy(HBase):
     """Copy class. See module documentation for more information.
@@ -110,8 +110,17 @@ class Archy(HBase):
         self._pnl_files.size_hint_y=self.size_hint_y
         self._pnl_files.height = self._pnl_files.minimum_height
         for item in files:
-            item = Label(text=item, font_size=20, size_hint_y=None, height=30)
-            self._pnl_files.add_widget(item)
+            if isinstance(item, Box):
+                name = os.path.basename(item.movie)
+                image = os.path.basename(item.picture)
+                label_v = Label(text=name, font_size=20, size_hint_y=None, height=30)
+                # label_i = Label(text=image, font_size=20, size_hint_y=None, height=30)
+                self._pnl_files.add_widget(label_v)
+                # self._pnl_files.add_widget(label_i)
+            else:
+                name = os.path.basename(item)
+                label = Label(text=name, font_size=20, size_hint_y=None, height=30)
+                self._pnl_files.add_widget(label)
 
     def search(self, *args):
         Logger.warning(msg='procesando ...')
@@ -131,11 +140,35 @@ class Copy(Archy):
         instance_id = instance.text
         if instance_id != self.BUTTON_CANCEL:
             Logger.warning(msg="write here for action copy files")
-            for item in self.files:
-                self.copy_file(item)
+            if isinstance(self.files[0], Box):
+                Logger.warning(msg="files with objets Box")
+                path_image = os.path.join(self.path, "Thumbails")
+                if not os.path.exists(path_image): os.makedirs(path_image)
+                for item in self.files:
+                    self.copy_box(item)
+            else:
+                for item in self.files:
+                    self.copy_file(item)
         
         super(Copy, self)._on_click(instance)
     
+    def copy_box(self, box, *args):
+        video = os.path.basename(box.movie)
+        new_video_path = os.path.join(self.path, video)
+        caja = Box(movie=new_video_path)
+
+        def copia(origen, destino, *args):
+            try:
+                shutil.copy(origen, destino)
+            except IOError as e:
+                Error(text='Don`t panic!. '+ str(e.args) + origen)
+        
+        try:
+            Clock.schedule_once(partial(copia, box.movie, caja.movie), -1)
+            Clock.schedule_once(partial(copia, box.picture, caja.picture), -1)
+        except Exception as e:
+            Error(text='Don`t panic!. '+ str(e.args))
+
     def copy_file(self, archivo, *args):
 
         origen = os.path.abspath(archivo)
@@ -164,11 +197,35 @@ class Move(Archy):
         instance_id = instance.text
         if instance_id != self.BUTTON_CANCEL:
             Logger.warning(msg="write here for action copy files")
-            for item in self.files:
-                self.move_file(item)
+            if isinstance(self.files[0], Box):
+                Logger.warning(msg="files with objets Box")
+                path_image = os.path.join(self.path, "Thumbails")
+                if not os.path.exists(path_image): os.makedirs(path_image)
+                for item in self.files:
+                    self.move_box(item)
+            else:
+                for item in self.files:
+                    self.move_file(item)
         
         super(Move, self)._on_click(instance)
     
+    def move_box(self, box, *args):
+        video = os.path.basename(box.movie)
+        new_video_path = os.path.join(self.path, video)
+        caja = Box(movie=new_video_path)
+
+        def mueve(origen, destino, *args):
+            try:
+                shutil.move(origen, destino)
+            except IOError as e:
+                Error(text='Don`t panic!. '+ str(e.args) + origen)
+
+        try:
+            Clock.schedule_once(partial(mueve, box.movie, caja.movie), -1)
+            Clock.schedule_once(partial(mueve, box.picture, caja.picture), -1)
+        except Exception as e:
+            Error(text='Don`t panic!. '+ str(e.args))
+
     def move_file(self, archivo, *args):
 
         origen = os.path.abspath(archivo)
@@ -202,8 +259,14 @@ class Remove(Archy):
         instance_id = instance.text
         if instance_id != self.BUTTON_CANCEL:
             Logger.warning(msg="write here for action copy files")
-            for item in self.files:
-                self.remove_file(item)
+            if isinstance(self.files[0], Box):
+                Logger.warning(msg="files with objets Box")
+                for item in self.files:
+                    self.remove_file(item.movie)
+                    self.remove_file(item.picture)
+            else:
+                for item in self.files:
+                    self.remove_file(item)
         super(Remove, self)._on_click(instance)
 
     def remove_file(self, archivo, *args):
@@ -232,7 +295,10 @@ class Rename(Archy):
         self.unbind(path=self.direction.setter('text'))
         self.bind(name=self.direction.setter('text'))
         self.btn_search.disabled = True
-        self.name = self.files[0]
+        if isinstance(self.files[0], Box):
+            self.name = os.path.basename(self.files[0].movie)
+        else:
+            self.name = os.path.basename(self.files[0])
         # self.direction.text = self.files[0]
         #self.direction.disabled = True
         return pnl
@@ -246,7 +312,12 @@ class Rename(Archy):
         if instance_id != self.BUTTON_CANCEL:
             Logger.warning(msg="write here for action copy files")
             self.name = self.direction.text
-            self.rename_file(self.files[0])
+            if isinstance(self.files[0], Box):
+                self.rename_file(self.files[0].movie)
+                self.name = self.name + '_thumbs_0000.gif'
+                self.rename_file(self.files[0].picture)
+            else:
+                self.rename_file(self.files[0])
         super(Rename, self)._on_click(instance)
 
     def rename_file(self, archivo, *args):
@@ -298,7 +369,7 @@ class Box(object):
         
         filenamevideo = os.path.basename(self.movie)
         pathfilevideo = os.path.dirname(self.movie)
-        pathfileimage = os.path.join(pathfilevideo, 'Thumbais')
+        pathfileimage = os.path.join(pathfilevideo, 'Thumbails')
         filenameimage = filenamevideo + '_thumbs_0000.gif'
         self.picture = os.path.join(pathfileimage, filenameimage)
         self.seted = True
